@@ -52,7 +52,7 @@ C26 <- function(x){
   return(x)
 }
 
-Enigma <- function(Rotors = list(III,II,I), RingSetting = c(1,1,1),Reflector = RefB, Text = "HENK"){
+Enigma <- function(Rotors = list(III,II,I), RingSetting = c(1,1,1), RotorPos = c("A","A","A"), Reflector = RefB, Plugboard = NULL, Text = "HENK"){
   
   Rotor1 <- strsplit(Rotors[[length(Rotors)]]$Enc, "")[[1]]
   Rotor1 <- cbind(Rotor1,LETTERS)
@@ -77,72 +77,93 @@ Enigma <- function(Rotors = list(III,II,I), RingSetting = c(1,1,1),Reflector = R
   RingSetting3 <- RingSetting[length(RingSetting)-2]
   if(length(RingSetting) == 4) RingSetting4 <- RingSetting[length(RingSetting)-3]
   
+#   Rotor1 <- cbind(Rotor1,c(LETTERS[RingSetting1:26],LETTERS[0:(RingSetting1-1)]))
+#   Rotor2 <- cbind(Rotor2,c(LETTERS[RingSetting2:26],LETTERS[0:(RingSetting2-1)]))
+#   Rotor3 <- cbind(Rotor3,c(LETTERS[RingSetting3:26],LETTERS[0:(RingSetting3-1)]))
+  
+  
   Reflec <- strsplit(Reflector, "")[[1]]
   Reflec <- cbind(Reflec,LETTERS)
   
+  Plugb <- cbind(LETTERS,LETTERS)
+  if(!is.null(Plugboard)){
+    for(s in 1:length(Plugboard)){
+      SwapL <- strsplit(Plugboard[[s]],"")[[1]]
+      Plugb[Plugb[,1]==SwapL[1],2] <- SwapL[2]
+      Plugb[Plugb[,1]==SwapL[2],2] <- SwapL[1]
+    }
+  }
+  
   TextIn <- strsplit(Text, "")[[1]]
+  
+  RotorPos1 <- 
+  RotorPos2 <- 
+  RotorPos3 <- 
   
   for(i in 1:length(TextIn)){
     
-    RingSetting1 <- C26(RingSetting1 + 1)
+    RotorPos1 <- C26(RotorPos1 + 1)
     
-    if(any(LETTERS[C26(RingSetting1 - 1)] == Rotor1T)) RingSetting2 <- C26(RingSetting2 + 1)
+    if(any(LETTERS[C26(RotorPos1 - 1)] == Rotor1T)) RotorPos2 <- C26(RotorPos2 + 1)
     
-    if(any(LETTERS[C26(RingSetting1 - 2)] == Rotor1T) & 
-         any(LETTERS[C26(RingSetting2)] == Rotor2T)){
-      RingSetting3 <- C26(RingSetting3 + 1)
-      RingSetting2 <- C26(RingSetting2 + 1)
+    if(any(LETTERS[C26(RotorPos1 - 2)] == Rotor1T) & 
+         any(LETTERS[C26(RotorPos2)] == Rotor2T)){
+      RotorPos3 <- C26(RotorPos3 + 1)
+      RotorPos2 <- C26(RotorPos2 + 1)
     }	
     
-    if(length(RingSetting) == 4) c(RingSetting4,RingSetting3,RingSetting2,RingSetting1)
-    if(length(RingSetting) == 3) c(RingSetting3,RingSetting2,RingSetting1)
+    if(length(RotorPos) == 4) c(RotorPos4,RotorPos3,RotorPos2,RotorPos1)
+    if(length(RotorPos) == 3) c(RotorPos3,RotorPos2,RotorPos1)
     
     inpL <- TextIn[i]
+    inpL <- Plugb[Plugb[,1] == inpL,2]
     
-    inp1 <- C26(which(LETTERS == inpL) + (RingSetting1 - 1))
+    inp1 <- C26(which(LETTERS == inpL) + (RotorPos1 - 1) - (RingSetting1 - 1))
     out1 <- Rotor1[Rotor1[,2] == LETTERS[inp1], 1]
-    out1 <- C26(which(LETTERS == out1) - (RingSetting1 - 1))
+    out1 <- C26(which(LETTERS == out1) - (RotorPos1 - 1) + (RingSetting1 - 1))
     
-    inp2 <- LETTERS[C26(out1 + (RingSetting2 - 1))]
+    inp2 <- LETTERS[C26(out1 + (RotorPos2 - 1) - (RingSetting2 - 1))]
     out2 <- Rotor2[Rotor2[,2] == inp2, 1]
-    out2 <- C26(which(LETTERS == out2) - (RingSetting2 - 1))
+    out2 <- C26(which(LETTERS == out2) - (RotorPos2 - 1) + (RingSetting2 - 1))
     
-    inp3 <- LETTERS[C26(out2 + (RingSetting3 - 1))]
+    inp3 <- LETTERS[C26(out2 + (RotorPos3 - 1) - (RingSetting3 - 1))]
     out3 <- Rotor3[Rotor3[,2] == inp3, 1]
-    out3 <- C26(which(LETTERS == out3) - (RingSetting3 - 1))
+    out3 <- C26(which(LETTERS == out3) - (RotorPos3 - 1) + (RingSetting3 - 1))
     
-    if(length(RingSetting) == 4){
-    inp4 <- LETTERS[C26(out3 + (RingSetting4 - 1))]
-    out4 <- Rotor4[Rotor4[,2] == inp4, 1]
-    out4 <- C26(which(LETTERS == out4) - (RingSetting4 - 1))
-    
-    outR <- Reflec[Reflec[,2] == LETTERS[out4], 1]
-    outR <- which(LETTERS == outR)
-    
-    inp4 <- LETTERS[C26(outR + (RingSetting4 - 1))]
-    out4 <- Rotor4[Rotor4[,1] == inp4, 2]
-    outR <- C26(which(LETTERS == out4) - (RingSetting4 - 1))
+    if(length(RotorPos) == 4){
+      inp4 <- LETTERS[C26(out3 + (RotorPos4 - 1) - (RingSetting4 - 1))]
+      out4 <- Rotor4[Rotor4[,2] == inp4, 1]
+      out4 <- C26(which(LETTERS == out4) - (RotorPos4 - 1) + (RingSetting4 - 1))
+      
+      outR <- Reflec[Reflec[,2] == LETTERS[out4], 1]
+      outR <- which(LETTERS == outR)
+      
+      inp4 <- LETTERS[C26(outR + (RotorPos4 - 1))]
+      out4 <- Rotor4[Rotor4[,1] == inp4, 2]
+      outR <- C26(which(LETTERS == out4) - (RotorPos4 - 1))
     } else {
-    outR <- Reflec[Reflec[,2] == LETTERS[out3], 1]
-    outR <- which(LETTERS == outR)
+      outR <- Reflec[Reflec[,2] == LETTERS[out3], 1]
+      outR <- which(LETTERS == outR)
     }
     
-    inp3 <- LETTERS[C26(outR + (RingSetting3 - 1))]
+    inp3 <- LETTERS[C26(outR + (RotorPos3 - 1))]
     out3 <- Rotor3[Rotor3[,1] == inp3, 2]
-    out3 <- C26(which(LETTERS == out3) - (RingSetting3 - 1))
+    out3 <- C26(which(LETTERS == out3) - (RotorPos3 - 1))
     
-    inp2 <- LETTERS[C26(out3 + (RingSetting2 - 1))]
+    inp2 <- LETTERS[C26(out3 + (RotorPos2 - 1))]
     out2 <- Rotor2[Rotor2[,1] == inp2, 2]
-    out2 <- C26(which(LETTERS == out2) - (RingSetting2 - 1))
+    out2 <- C26(which(LETTERS == out2) - (RotorPos2 - 1))
     
-    inp1 <- LETTERS[C26(out2 + (RingSetting1 - 1))]
+    inp1 <- LETTERS[C26(out2 + (RotorPos1 - 1))]
     out1 <- Rotor1[Rotor1[,1] == inp1, 2]
-    out1 <- C26(which(LETTERS == out1) - (RingSetting1 - 1))
+    out1 <- C26(which(LETTERS == out1) - (RotorPos1 - 1))
     outL <- LETTERS[out1]
- 
-    if(length(RingSetting) == 4) c(RingSetting4,RingSetting3,RingSetting2,RingSetting1)
-    if(length(RingSetting) == 3) c(RingSetting3,RingSetting2,RingSetting1)   
-  
+    outL <- Plugb[Plugb[,2] == outL,1]
+    
+    
+    if(length(RotorPos) == 4) c(RotorPos4,RotorPos3,RotorPos2,RotorPos1)
+    if(length(RotorPos) == 3) c(RotorPos3,RotorPos2,RotorPos1)   
+    
     print(outL)
   }
 }

@@ -76,6 +76,44 @@ C26 <- function(x){
   return(x)
 }
 
+EnigmaIntF <- function(InpL,
+                       InpSf,OutSf,
+                       InpR1f,IntR1f,DecR1f,OutR1f,
+                       InpR2f=NULL,IntR2f,DecR2f,OutR2f,
+                       InpR3f=NULL,IntR3f,DecR3f,OutR3f,
+                       InpRe,OutRe,
+                       InpR3f,IntR3f,DecR3f,OutR3f,
+                       InpR2f=NULL,IntR2f,DecR2f,OutR2f,
+                       InpR1f=NULL,IntR1f,DecR1f,OutR1f
+                       InpSb,OutSb,
+                       OutL,
+                       RS1,RS2,RS3,RP1,RP2,RP3
+                       ){
+  FrameEnig <- data.frame(vInpL=LETTERS,vInpSf=LETTERS,vOutSf=LETTERS,
+             #Rotor1
+             vInpR1f=LETTERS,
+             vIntR1f=c(LETTERS[(C26(RP1-RS1)+1):26],LETTERS[0:(C26(RP1-RS1))]),
+             vDecR1f=c(LETTERS[(C26(RP1-RS1)+1):26],LETTERS[0:(C26(RP1-RS1))]),
+             vRinR1f=c(LETTERS[(C26(RP1):26)],LETTERS[0:(C26(RP1)-1)]),
+             vOutR1f=LETTERS,
+             #Rotor2
+             vIntR2f=c(LETTERS[(C26(RP2-RS2)+1):26],LETTERS[0:(C26(RP2-RS2))]),
+             vDecR2f=c(LETTERS[(C26(RP2-RS2)+1):26],LETTERS[0:(C26(RP2-RS2))]),
+             vRinR2f=c(LETTERS[(C26(RP2):26)],LETTERS[0:(C26(RP2)-1)]),
+             vOutR2f=LETTERS,
+             #Rotor3
+             vIntR3f=c(LETTERS[(C26(RP3-RS3)+1):26],LETTERS[0:(C26(RP3-RS3))]),
+             vDecR3f=c(LETTERS[(C26(RP3-RS3)+1):26],LETTERS[0:(C26(RP3-RS3))]),
+             vRinR3f=c(LETTERS[(C26(RP3):26)],LETTERS[0:(C26(RP3)-1)]),
+             vOutR3f=LETTERS,
+             #Reflector
+             vRef=LETTERS)
+             #Rotor3
+             
+  
+  
+}
+
 EnigmaExtF <- function(InpL=NULL,OutL=NULL,RotorPos){
   KeyBoard <- 
     data.frame(Symb = c("Q","W","E","R","T","Z","U","I","O",
